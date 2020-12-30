@@ -1,9 +1,11 @@
+import 'package:budgetApp/widgets/chart.dart';
 import "package:flutter/material.dart";
 import "package:flutter/cupertino.dart";
 
-import 'widgets/transaction_file.dart';
-import 'widgets/new_transaction.dart';
-import 'models/transaction.dart';
+import './widgets/transaction_file.dart';
+import './widgets/new_transaction.dart';
+import './models/transaction.dart';
+import "./widgets/chart.dart";
 
 // import "package:intl/intl.dart";
 
@@ -23,9 +25,21 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.white,
         accentColor: Colors.blue,
         fontFamily: "OpenSans",
+        textTheme: ThemeData.light().textTheme.copyWith(
+              headline6: TextStyle(
+                  fontFamily: 'Quicksand',
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor),
+            ),
         appBarTheme: AppBarTheme(
           textTheme: ThemeData.light().textTheme.copyWith(
-              title: TextStyle(fontFamily: 'Quicksand', fontSize: 20)),
+                headline3: TextStyle(
+                    fontFamily: 'Quicksand',
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).primaryColor),
+              ),
         ),
       ),
       //themeMode: ThemeMode.dark,
@@ -35,24 +49,26 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  // final List<Transaction> trx = [
-  //   Transaction("t1", "Shoe stand", 14.55, DateTime.now()),
-  //   Transaction("t2", "White Bulbs", 55.55, DateTime.now()),
-  //   Transaction("t3", "Graham Norton show tickets", 100, DateTime.now())
-  // ];
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-//  String titleInput, amountInput;
-
   final List<Transaction> _userTrx = [
-    Transaction("t1", "Shoe stand", 14.55, DateTime.now()),
-    Transaction("t2", "White Bulbs", 55.55, DateTime.now()),
-    Transaction("t3", "Graham Norton show tickets", 100, DateTime.now())
+    // Transaction("t1", "Shoe stand", 14.55, DateTime.now()),
+    // Transaction("t2", "White Bulbs", 55.55, DateTime.now()),
+    // Transaction("t3", "Graham Norton show tickets", 100, DateTime.now())
   ];
+
+  List<Transaction> get _weeklyTransactions {
+    return _userTrx.where((element) {
+      return element.getDate().isAfter(
+            DateTime.now().subtract(
+              Duration(days: 7),
+            ),
+          );
+    }).toList();
+  }
 
   void _addNewTransaction(String title, double amount) {
     final newTx =
@@ -86,7 +102,10 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
         title: Text(
           "Personal Expense",
-          style: TextStyle(fontFamily: "Quicksand"),
+          style: TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -95,14 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment
               .stretch, // crossaxis is the x axis in a column.
           children: <Widget>[
-            Container(
-              width: double.infinity,
-              child: Card(
-                child: Text("CHART!"),
-                color: Colors.blueAccent,
-                elevation: 5,
-              ),
-            ),
+            Chart(_weeklyTransactions),
             TransactionList(_userTrx),
           ],
         ),
