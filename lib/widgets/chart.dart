@@ -33,7 +33,7 @@ class Chart extends StatelessWidget {
         "day": DateFormat.E().format(weekDay).substring(0, 3),
         'amount': totalSum
       };
-    });
+    }).reversed.toList();
   }
 
 //fold allows us to change a list to another type with a certain logic we define in the function we pass
