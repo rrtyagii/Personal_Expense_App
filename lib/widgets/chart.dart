@@ -34,7 +34,7 @@ class Chart extends StatelessWidget {
         'amount': totalSum
       };
     }).reversed.toList();
-  }
+  } //fixed the behaviour of the order of the days in our chart.
 
 //fold allows us to change a list to another type with a certain logic we define in the function we pass
 //to fold. We need a double but groupTransactionValues is List so changing it to double.

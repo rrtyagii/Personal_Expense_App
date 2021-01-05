@@ -26,6 +26,18 @@ class _NewTransactionState extends State<NewTransaction> {
     Navigator.of(context).pop();
   }
 
+  void _pickDatefromDatePicker() {
+    //List<>
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    ).then(() {}); // The code execution will not pause and wait for
+  } // the function in the then app to finish
+
+//the function we pass here is stored in memory and the other
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -52,10 +64,31 @@ class _NewTransactionState extends State<NewTransaction> {
               //   amountInput = value;
               // },
             ),
-            FlatButton(
+            Row(
+              children: <Widget>[
+                Text("No Date Chosen"),
+                FlatButton(
+                  textColor: Theme.of(context).accentColor,
+                  child: Text(
+                    "Choose Date",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onPressed: _pickDatefromDatePicker,
+                ),
+              ],
+            ),
+            RaisedButton(
               onPressed: _submissionForData,
-              textColor: Colors.blue[400],
-              child: Text("Add Transaction"),
+              textColor: Theme.of(context).textTheme.button.color,
+              color: Theme.of(context).accentColor,
+              child: Text(
+                "Add Transaction",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),
@@ -63,3 +96,33 @@ class _NewTransactionState extends State<NewTransaction> {
     );
   }
 }
+
+// Row(
+//   children: <Widget>[
+//     Text("No Date Chosen"),
+//     RaisedButton(
+//       textColor: Theme.of(context).primaryColor,
+//       child: Container(
+//         padding: EdgeInsets.all(5),
+//         decoration: BoxDecoration(
+//           color: Theme.of(context).accentColor,
+//         ),
+//         child: Text("Choose Date"),
+//       ),
+//       onPressed: () {},
+//     ),
+//   ],
+// ),
+// RaisedButton(
+//   onPressed: _submissionForData,
+//   textColor: Theme.of(context).primaryColor,
+//   child: Container(
+//     padding: EdgeInsets.all(5),
+//     decoration: BoxDecoration(
+//       color: Theme.of(context).accentColor,
+//     ),
+//     child: Text(
+//       "Add Transaction",
+//     ),
+//   ),
+// )
