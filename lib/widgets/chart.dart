@@ -16,7 +16,7 @@ class Chart extends StatelessWidget {
         Duration(days: index),
       );
 
-      double totalSum;
+      var totalSum = 0.0;
 
       for (var i = 0; i < recentTransactions.length; i++) {
         if (recentTransactions[i].getDate().day == weekDay.day &&
@@ -41,7 +41,7 @@ class Chart extends StatelessWidget {
 
   double get maxSpending {
     return groupedTransactionValues.fold(0.0, (sum, e) {
-      return (sum + e['amount']);
+      return sum + e['amount'];
     });
   }
 
@@ -49,16 +49,25 @@ class Chart extends StatelessWidget {
   Widget build(BuildContext context) {
 //    print(groupedTransactionValues);
     return Card(
-      elevation: 7,
-      margin: EdgeInsets.all(10),
-      child: Row(
-        children: groupedTransactionValues.map((e) {
-          return ChartBar(
-            e['day'],
-            e['amount'],
-            (e['amount'] as double) / maxSpending,
-          );
-        }).toList(),
+      elevation: 8,
+      margin: EdgeInsets.all(20),
+      child: Container(
+        padding: EdgeInsets.all(10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: groupedTransactionValues.map((e) {
+            return Flexible(
+              fit: FlexFit.tight,
+              child: ChartBar(
+                e['day'],
+                e['amount'],
+                maxSpending == 0.0
+                    ? 0.0
+                    : (e['amount'] as double) / maxSpending,
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
