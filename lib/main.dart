@@ -74,9 +74,13 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addNewTransaction(String title, double amount) {
-    final newTx =
-        Transaction(DateTime.now().toString(), title, amount, DateTime.now());
+  void _addNewTransaction(String title, double amount, DateTime chosenDate) {
+    final newTx = Transaction(
+      DateTime.now().toString(),
+      title,
+      amount,
+      chosenDate,
+    );
 
     setState(() {
       _userTrx.add(newTx);

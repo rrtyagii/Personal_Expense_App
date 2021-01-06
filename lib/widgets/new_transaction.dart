@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function _addTransaction;
@@ -10,18 +11,25 @@ class NewTransaction extends StatefulWidget {
 
 class _NewTransactionState extends State<NewTransaction> {
   final _titleController = TextEditingController();
-
   final _amountController = TextEditingController();
+  DateTime _selectedDate;
 
   void _submissionForData() {
+    if (_amountController.text.isEmpty) {
+      return;
+    }
     final enteredTitle = _titleController.text;
     final enteredAmount = double.parse(_amountController.text);
 
-    if (enteredTitle.isEmpty || enteredAmount <= 0) {
+    if (enteredTitle.isEmpty || enteredAmount <= 0 || _selectedDate == null) {
       return;
     }
 
-    widget._addTransaction(enteredTitle, enteredAmount);
+    widget._addTransaction(
+      enteredTitle,
+      enteredAmount,
+      _selectedDate,
+    );
 
     Navigator.of(context).pop();
   }
@@ -33,7 +41,14 @@ class _NewTransactionState extends State<NewTransaction> {
       initialDate: DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-    ).then(() {}); // The code execution will not pause and wait for
+    ).then((pickedDate) {
+      if (pickedDate == null) {
+        return;
+      }
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    }); // The code execution will not pause and wait for
   } // the function in the then app to finish
 
 //the function we pass here is stored in memory and the other
@@ -66,7 +81,13 @@ class _NewTransactionState extends State<NewTransaction> {
             ),
             Row(
               children: <Widget>[
-                Text("No Date Chosen"),
+                Expanded(
+                  child: Text(
+                    _selectedDate == null
+                        ? "No Date Chosen"
+                        : "Picked Date: ${DateFormat.yMd().format(_selectedDate)}",
+                  ),
+                ),
                 FlatButton(
                   textColor: Theme.of(context).accentColor,
                   child: Text(
