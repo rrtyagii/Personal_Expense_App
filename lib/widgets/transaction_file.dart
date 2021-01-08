@@ -23,76 +23,81 @@ class TransactionList extends StatefulWidget {
 }
 
 class _TransactionListState extends State<TransactionList> {
+  //this hard coded height will pose a problem in our app when we switch to
+//landscape mode as the height will less in landscape mode. But when we
+//scroll all the we down to the list, we have problem scrolling back up
+//because the barchart is not scrollable but the list is. So the screen is
+//bounded by the list and limits us to scroll back it up.
+//Can fix this with using a dynamically calculated size of the screen
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 350,
-      child: widget.transactions.isEmpty
-          ? Column(
-              children: <Widget>[
-                Text(
-                  "No Transaction Added yet! ",
-                  style: Theme.of(context).textTheme.headline6,
+    return widget.transactions.isEmpty
+        ? Column(
+            children: <Widget>[
+              Text(
+                "No Transaction Added yet! ",
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                height: 200,
+                child: Image.asset(
+                  'assets/images/waiting.png',
+                  fit: BoxFit.cover,
                 ),
-                SizedBox(
-                  height: 10,
+              )
+            ],
+          )
+        : ListView.builder(
+            itemBuilder: (ctx, index) {
+              return Dismissible(
+                key: Key(widget.transactions[index].getId()),
+                onDismissed: (direction) =>
+                    widget.deleteTx(widget.transactions[index].getId()),
+                background: Container(
+                  color: Colors.red,
                 ),
-                Container(
-                  height: 200,
-                  child: Image.asset(
-                    'assets/images/waiting.png',
-                    fit: BoxFit.cover,
+                child: Card(
+                  elevation: 5,
+                  margin: EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 5,
                   ),
-                )
-              ],
-            )
-          : ListView.builder(
-              itemBuilder: (ctx, index) {
-                return Dismissible(
-                  key: Key(widget.transactions[index].getId()),
-                  onDismissed: (direction) =>
-                      widget.deleteTx(widget.transactions[index].getId()),
-                  background: Container(
-                    color: Colors.red,
-                  ),
-                  child: Card(
-                    elevation: 5,
-                    margin: EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 5,
-                    ),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        radius: 30,
-                        child: Padding(
-                          padding: EdgeInsets.all(6),
-                          child: FittedBox(
-                            child: Text(
-                                '\$${widget.transactions[index].getAmount()}'),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 30,
+                      child: Padding(
+                        padding: EdgeInsets.all(6),
+                        child: FittedBox(
+                          child: Text(
+                            '\$${widget.transactions[index].getAmount()}',
                           ),
                         ),
                       ),
-                      title: Text(
-                        widget.transactions[index].getTitle(),
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      subtitle: Text(
-                        DateFormat.yMMMd()
-                            .format(widget.transactions[index].getDate()),
-                      ),
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete),
-                        color: Theme.of(context).errorColor,
-                        onPressed: () =>
-                            widget.deleteTx(widget.transactions[index].getId()),
-                      ),
+                    ),
+                    title: Text(
+                      widget.transactions[index].getTitle(),
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    subtitle: Text(
+                      DateFormat.yMMMd()
+                          .format(widget.transactions[index].getDate()),
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      color: Theme.of(context).errorColor,
+                      onPressed: () =>
+                          widget.deleteTx(widget.transactions[index].getId()),
                     ),
                   ),
-                );
-              },
-              itemCount: widget.transactions.length,
-            ),
-    );
+                ),
+              );
+            },
+            itemCount: widget.transactions.length,
+          );
   }
 }
 

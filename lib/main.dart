@@ -110,29 +110,42 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.add_chart),
-              onPressed: () => _startAddnewTransaction(context))
-        ],
-        title: Text(
-          "Personal Expense",
-          style: TextStyle(
-            fontFamily: "Quicksand",
-            fontWeight: FontWeight.bold,
-          ),
+    final appBar = AppBar(
+      actions: <Widget>[
+        IconButton(
+            icon: Icon(Icons.add_chart),
+            onPressed: () => _startAddnewTransaction(context))
+      ],
+      title: Text(
+        "Personal Expense",
+        style: TextStyle(
+          fontFamily: "Quicksand",
+          fontWeight: FontWeight.bold,
         ),
       ),
+    );
+    return Scaffold(
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           //mainAxisAlignment: MainAxisAlignment.center,  in a column, mainaxis is the y axis
           crossAxisAlignment: CrossAxisAlignment
               .stretch, // crossaxis is the x axis in a column.
           children: <Widget>[
-            Chart(_weeklyTransactions),
-            TransactionList(_userTrx, _deleteTransaction),
+            Container(
+              height: (MediaQuery.of(context).size.height -
+                      appBar.preferredSize.height -
+                      MediaQuery.of(context).padding.top) *
+                  0.4,
+              child: Chart(_weeklyTransactions),
+            ),
+            Container(
+              height: (MediaQuery.of(context).size.height -
+                      appBar.preferredSize.height -
+                      MediaQuery.of(context).padding.top) *
+                  0.6,
+              child: TransactionList(_userTrx, _deleteTransaction),
+            ),
           ],
         ),
       ),
