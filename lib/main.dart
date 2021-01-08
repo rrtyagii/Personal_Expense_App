@@ -1,5 +1,6 @@
 import 'package:budgetApp/widgets/chart.dart';
 import "package:flutter/material.dart";
+import 'package:flutter/services.dart';
 import "package:flutter/cupertino.dart";
 
 import './widgets/transaction_file.dart';
@@ -12,6 +13,13 @@ import "./widgets/chart.dart";
 // import 'models/trasaction.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations(
+  //   [
+  //     DeviceOrientation.portraitUp,
+  //     DeviceOrientation.portraitDown,
+  //   ],
+  // );  This code snippet is to lock the device orientation to portait mode
   runApp(MyApp());
 }
 
@@ -59,11 +67,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _userTrx = [
-    // Transaction("t1", "Shoe stand", 14.55, DateTime.now()),
-    // Transaction("t2", "White Bulbs", 55.55, DateTime.now()),
-    // Transaction("t3", "Graham Norton show tickets", 100, DateTime.now())
-  ];
+  final List<Transaction> _userTrx = [];
+  bool _showChart = false;
 
   List<Transaction> get _weeklyTransactions {
     return _userTrx.where((element) {
@@ -110,6 +115,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
+    //storing appBar is a varialbe to access different properties like height
     final appBar = AppBar(
       actions: <Widget>[
         IconButton(
@@ -124,6 +133,16 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+
+//storing transaction lists height on screen using container
+    final txListWidget = Container(
+      height: (MediaQuery.of(context).size.height -
+              appBar.preferredSize.height -
+              MediaQuery.of(context).padding.top) *
+          0.6,
+      child: TransactionList(_userTrx, _deleteTransaction),
+    );
+
     return Scaffold(
       appBar: appBar,
       body: SingleChildScrollView(
@@ -132,20 +151,41 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment
               .stretch, // crossaxis is the x axis in a column.
           children: <Widget>[
-            Container(
-              height: (MediaQuery.of(context).size.height -
-                      appBar.preferredSize.height -
-                      MediaQuery.of(context).padding.top) *
-                  0.4,
-              child: Chart(_weeklyTransactions),
-            ),
-            Container(
-              height: (MediaQuery.of(context).size.height -
-                      appBar.preferredSize.height -
-                      MediaQuery.of(context).padding.top) *
-                  0.6,
-              child: TransactionList(_userTrx, _deleteTransaction),
-            ),
+            if (isLandscape)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Switch(
+                    value: _showChart,
+                    onChanged: (val) {
+                      setState(
+                        () {
+                          _showChart = val;
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+            if (!isLandscape)
+              Container(
+                height: (MediaQuery.of(context).size.height -
+                        appBar.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.4, //Can change it to 1 or 0.7 since we are only showing chart
+                child: Chart(_weeklyTransactions),
+              ),
+            if (!isLandscape) txListWidget,
+            if (isLandscape)
+              _showChart
+                  ? Container(
+                      height: (MediaQuery.of(context).size.height -
+                              appBar.preferredSize.height -
+                              MediaQuery.of(context).padding.top) *
+                          0.7, //Can change it to 1 or 0.7 since we are only showing chart
+                      child: Chart(_weeklyTransactions),
+                    )
+                  : txListWidget,
           ],
         ),
       ),

@@ -33,23 +33,28 @@ class _TransactionListState extends State<TransactionList> {
   @override
   Widget build(BuildContext context) {
     return widget.transactions.isEmpty
-        ? Column(
-            children: <Widget>[
-              Text(
-                "No Transaction Added yet! ",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                height: 200,
-                child: Image.asset(
-                  'assets/images/waiting.png',
-                  fit: BoxFit.cover,
-                ),
-              )
-            ],
+        ? LayoutBuilder(
+            builder: (ctx, constrainsts) {
+              return Column(
+                children: <Widget>[
+                  Text(
+                    "No Transaction Added yet! ",
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    //height: 200
+                    height: constrainsts.maxHeight * 0.6,
+                    child: Image.asset(
+                      'assets/images/waiting.png',
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                ],
+              );
+            },
           )
         : ListView.builder(
             itemBuilder: (ctx, index) {
