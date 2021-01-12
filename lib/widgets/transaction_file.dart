@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart';
 
 import '../models/transaction.dart';
 
-/** Instead of using a card with our custom styling and custom setups, 
+/*
+ *  Instead of using a card with our custom styling and custom setups, 
  * one alternative is a widget built into flutter.
  * 
  * @ListTile Widget, 
@@ -91,12 +92,20 @@ class _TransactionListState extends State<TransactionList> {
                       DateFormat.yMMMd()
                           .format(widget.transactions[index].getDate()),
                     ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      color: Theme.of(context).errorColor,
-                      onPressed: () =>
-                          widget.deleteTx(widget.transactions[index].getId()),
-                    ),
+                    trailing: MediaQuery.of(context).size.width > 560
+                        ? FlatButton.icon(
+                            textColor: Theme.of(context).errorColor,
+                            onPressed: () => widget
+                                .deleteTx(widget.transactions[index].getId()),
+                            icon: Icon(Icons.delete),
+                            label: Text("Delete"),
+                          )
+                        : IconButton(
+                            icon: Icon(Icons.delete),
+                            color: Theme.of(context).errorColor,
+                            onPressed: () => widget
+                                .deleteTx(widget.transactions[index].getId()),
+                          ),
                   ),
                 ),
               );
