@@ -10,7 +10,7 @@ class ChartBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (ctx, constraints) {
-        Column(
+        return Column(
           children: [
             Container(
               height: constraints.maxHeight * 0.15,

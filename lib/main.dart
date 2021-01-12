@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:budgetApp/widgets/chart.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
@@ -26,6 +28,43 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // return Platform.isIOS
+    //     ? CupertinoApp(
+    //         title: "Personal Expenses",
+    //         home: MyHomePage(),
+    //         theme: CupertinoThemeData(
+    //           primaryColor: Colors.black,
+    //           primaryContrastingColor: Colors.blue,
+    //           //   errorColor: Colors.grey[700],
+    //           //   fontFamily: "OpenSans",
+    //           //   textTheme: ThemeData.light().textTheme.copyWith(
+    //           //         headline6: TextStyle(
+    //           //           fontFamily: 'Quicksand',
+    //           //           fontSize: 15,
+    //           //           fontWeight: FontWeight.bold,
+    //           //           color: Theme.of(context).primaryColor,
+    //           //         ),
+    //           //         button: TextStyle(
+    //           //           color: Colors.white,
+    //           //         ),
+    //           //       ),
+    //           //   appBarTheme: AppBarTheme(
+    //           //     textTheme: ThemeData.light().textTheme.copyWith(
+    //           //           headline3: TextStyle(
+    //           //               fontFamily: 'Quicksand',
+    //           //               fontSize: 20,
+    //           //               fontWeight: FontWeight.bold,
+    //           //               color: Theme.of(context).primaryColor),
+    //           //         ),
+    //           //   ),
+    //           // ),
+    //           // themeMode: ThemeMode.dark,
+    //           // darkTheme: ThemeData(
+    //           //   brightness: Brightness.dark,
+    //           brightness: Brightness.dark,
+    //         ),
+    //       )
+    //     :
     return MaterialApp(
       title: "Personal Expenses",
       home: MyHomePage(),
@@ -55,8 +94,10 @@ class MyApp extends StatelessWidget {
               ),
         ),
       ),
-      //themeMode: ThemeMode.dark,
-      darkTheme: ThemeData.dark(),
+      themeMode: ThemeMode.dark,
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+      ),
     ); //MaterialApp
   }
 }
@@ -120,20 +161,40 @@ class _MyHomePageState extends State<MyHomePage> {
     final isLandscape = mediaQuery.orientation == Orientation.landscape;
 
     //storing appBar is a varialbe to access different properties like height
-    final appBar = AppBar(
-      actions: <Widget>[
-        IconButton(
-            icon: Icon(Icons.add_chart),
-            onPressed: () => _startAddnewTransaction(context))
-      ],
-      title: Text(
-        "Personal Expense",
-        style: TextStyle(
-          fontFamily: "Quicksand",
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
+    final PreferredSizeWidget appBar = Platform.isIOS
+        ? CupertinoNavigationBar(
+            middle: Text(
+              "Personal Expense",
+              style: TextStyle(
+                fontFamily: "Quicksand",
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                GestureDetector(
+                  child: Icon(CupertinoIcons.add),
+                  onTap: () => _startAddnewTransaction(context),
+                ),
+              ],
+            ),
+          )
+        : AppBar(
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.add_chart),
+                onPressed: () => _startAddnewTransaction(context),
+              )
+            ],
+            title: Text(
+              "Personal Expense",
+              style: TextStyle(
+                fontFamily: "Quicksand",
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
 
 //storing transaction lists height on screen using container
     final txListWidget = Container(
@@ -144,9 +205,8 @@ class _MyHomePageState extends State<MyHomePage> {
       child: TransactionList(_userTrx, _deleteTransaction),
     );
 
-    return Scaffold(
-      appBar: appBar,
-      body: SingleChildScrollView(
+    final pageBody = SafeArea(
+      child: SingleChildScrollView(
         child: Column(
           //mainAxisAlignment: MainAxisAlignment.center,  in a column, mainaxis is the y axis
           crossAxisAlignment: CrossAxisAlignment
@@ -156,6 +216,10 @@ class _MyHomePageState extends State<MyHomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  Text(
+                    'Show Chart',
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
                   Switch.adaptive(
                     value: _showChart,
                     onChanged: (val) {
@@ -190,11 +254,23 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: new FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () => _startAddnewTransaction(context),
-      ),
     );
+
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            child: pageBody,
+            navigationBar: appBar,
+          )
+        : Scaffold(
+            appBar: appBar,
+            body: pageBody,
+            floatingActionButton: Platform.isIOS
+                ? Container()
+                : new FloatingActionButton(
+                    child: Icon(Icons.add),
+                    onPressed: () => _startAddnewTransaction(context),
+                  ),
+          );
   }
 }
 
